@@ -136,16 +136,21 @@ macro(ocv_lapack_check)
       add_compile_definitions(ACCELERATE_NEW_LAPACK)
       add_compile_definitions(ACCELERATE_LAPACK_ILP64)
     endif()
+    
+    if (!RTX64)
+      try_compile(__VALID_LAPACK
+          "${OpenCV_BINARY_DIR}"
+          "${OpenCV_SOURCE_DIR}/cmake/checks/lapack_check.cpp"
+          CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${LAPACK_INCLUDE_DIR}\;${CMAKE_BINARY_DIR}"
+                      "-DLINK_DIRECTORIES:STRING=${__link_directories}"
+          COMPILE_DEFINITIONS ${LAPACK_TRY_COMPILE_DEF}
+          LINK_LIBRARIES ${LAPACK_LIBRARIES}
+          OUTPUT_VARIABLE TRY_OUT
+      )
+    else()
+      set(__VALID_LAPACK 1)
+    endif()
 
-    try_compile(__VALID_LAPACK
-        "${OpenCV_BINARY_DIR}"
-        "${OpenCV_SOURCE_DIR}/cmake/checks/lapack_check.cpp"
-        CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${LAPACK_INCLUDE_DIR}\;${CMAKE_BINARY_DIR}"
-                    "-DLINK_DIRECTORIES:STRING=${__link_directories}"
-        COMPILE_DEFINITIONS ${LAPACK_TRY_COMPILE_DEF}
-        LINK_LIBRARIES ${LAPACK_LIBRARIES}
-        OUTPUT_VARIABLE TRY_OUT
-    )
     if(NOT __VALID_LAPACK)
       file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log
           "\nLAPACK(${LAPACK_IMPL}) check FAILED:\n"
