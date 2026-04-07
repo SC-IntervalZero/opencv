@@ -1,5 +1,5 @@
 if(NOT DEFINED MIN_VER_CMAKE)
-  set(MIN_VER_CMAKE 2.8.12.2)
+  set(MIN_VER_CMAKE 3.5.1)
 endif()
 set(MIN_VER_CUDA 6.5)
 set(MIN_VER_PYTHON2 2.7)
